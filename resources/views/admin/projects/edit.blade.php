@@ -88,7 +88,7 @@
                     <tbody>
                     @foreach($project->stageItems as $item)
                         <tr id="row-existing-{{ $item->id }}">
-                            <td> {{ __('admin/projects.stages.' . $item->display_name) }}</td>
+                             <td>{{ $item->display_name }}</td>
 
                             <td><input type="date" name="stage[{{ $item->id }}][start_date]" value="{{ $item->start_date }}"></td>
                             <td><input type="date" name="stage[{{ $item->id }}][end_date]" value="{{ $item->end_date }}"></td>

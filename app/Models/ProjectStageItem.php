@@ -30,16 +30,18 @@ class ProjectStageItem extends Model
 
     public function getDisplayNameAttribute()
     {
-        // рахуємо скільки таких елементів є до цього
+        $base = __('admin/projects.stages.' . $this->stage->name);
+
         $count = self::where('project_id', $this->project_id)
             ->where('stage_id', $this->stage_id)
             ->where('id', '<=', $this->id)
             ->count();
 
         return $count > 1
-            ? "{$this->stage->name} {$count}"
-            : $this->stage->name;
+            ? "{$base} {$count}"
+            : $base;
     }
+
     public function workLogs()
     {
         return $this->hasMany(ProjectStageTimer::class, 'stage_item_id');
