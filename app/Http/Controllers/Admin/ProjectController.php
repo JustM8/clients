@@ -119,7 +119,7 @@ class ProjectController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'client_id' => 'nullable|exists:users,id',
-            'status_id' => 'nullable|integer',
+            'status_id' => 'nullable|exists:project_stages,id',
             'type_id' => 'nullable|exists:project_types,id',
             'rate' => 'nullable|string',
             'buffer_hours' => 'required|integer|min:1|max:168'

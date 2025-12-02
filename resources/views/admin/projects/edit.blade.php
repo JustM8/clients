@@ -47,14 +47,15 @@
 
                     <div class="d-flex gap-3 align-items-center">
 
-                        <select id="stageSelect" class="form-select" style="width:260px" name="status_id">
+                        <select id="stageSelect" class="form-select" name="status_id">
                             @foreach($project->stageItems as $item)
-                                <option value="{{ $item->id }}"
-                                    @selected($project->status_id == $item->id)>
+                                <option value="{{ $item->stage_id }}"
+                                    @selected($project->status_id == $item->stage_id)>
                                     {{ $item->stage->name }}
                                 </option>
                             @endforeach
                         </select>
+
 
 
                         <button type="button" class="btn btn-success" id="startTimerBtn">Старт</button>
@@ -503,22 +504,28 @@
             let timerInterval = null;
 
             function startLocalCounter(startedAtMs) {
-                // якщо немає елемента з таймером – просто нічого не робимо
                 if (!waitingTimer) return;
-
                 if (timerInterval) clearInterval(timerInterval);
+
+                const BUFFER = ({{ $project->buffer_hours ?? 48 }}) * 3600; // годин → секунди
 
                 timerInterval = setInterval(() => {
                     const now  = Date.now();
-                    const diff = Math.floor((now - startedAtMs) / 1000);
+                    const rawDiff = Math.floor((now - startedAtMs) / 1000);
 
-                    const h = String(Math.floor(diff / 3600)).padStart(2, '0');
-                    const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
-                    const s = String(diff % 60).padStart(2, '0');
+                    const diff = rawDiff - BUFFER;
+                    const sign = diff < 0 ? '-' : '';
 
-                    waitingTimer.textContent = `${h}:${m}:${s}`;
+                    const d = Math.abs(diff);
+
+                    const h = String(Math.floor(d / 3600)).padStart(2, '0');
+                    const m = String(Math.floor((d % 3600) / 60)).padStart(2, '0');
+                    const s = String(d % 60).padStart(2, '0');
+
+                    waitingTimer.textContent = `${sign}${h}:${m}:${s}`;
                 }, 1000);
             }
+
 
             // ---- Автостарт при перезавантаженні ----
             if (waitingActiveBox && waitingTimer) {

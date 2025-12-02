@@ -15,6 +15,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/locale/{lang}', [\App\Http\Controllers\LanguageController::class,'index'])->name('index');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // 🔹 Адмінська зона
