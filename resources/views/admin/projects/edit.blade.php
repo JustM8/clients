@@ -1,37 +1,38 @@
 @extends('layouts.app')
 
 @section('content')
-{{--    @if ($errors->any())--}}
-{{--        {{ dd($errors->all()) }}--}}
-{{--    @endif--}}
     <div class="container mt-4">
-        <h3>Проєкт: {{ $project->name }}</h3>
+        <h3>{{ __('admin/projects.edit.title', ['name' => $project->name]) }}</h3>
 
         {{-- якщо адмін --}}
         @if(Auth::user()->role === 'admin')
             <form action="{{ route('admin.projects.update', $project) }}" method="POST">
                 @csrf @method('PUT')
+
                 <div class="mb-3">
-                    <label>Назва</label>
+                    <label>{{ __('admin/projects.edit.fields.name') }}</label>
                     <input type="text" name="name" class="form-control" value="{{ $project->name }}" required>
                 </div>
+
                 <div class="mb-3">
-                    <label>Опис</label>
+                    <label>{{ __('admin/projects.edit.fields.description') }}</label>
                     <textarea name="description" class="form-control" rows="3">{{ $project->description }}</textarea>
                 </div>
+
                 <div class="mb-3">
-                    <label>Тип проєкту</label>
+                    <label>{{ __('admin/projects.edit.fields.type') }}</label>
                     <select name="type_id" class="form-select">
                         <option value="">—</option>
                         @foreach($types as $type)
-                            <option value="{{ $type->id }}" @selected(isset($project) && $project->type_id == $type->id)>
+                            <option value="{{ $type->id }}" @selected($project->type_id == $type->id)>
                                 {{ $type->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+
                 <div class="mb-3">
-                    <label>Клієнт</label>
+                    <label>{{ __('admin/projects.edit.fields.client') }}</label>
                     <select name="client_id" class="form-select">
                         <option value="">—</option>
                         @foreach($clients as $client)
@@ -43,49 +44,51 @@
                 </div>
 
                 <div class="card p-3 mb-4">
-                    <h5>Таймер етапу</h5>
+                    <h5>{{ __('admin/projects.edit.timer_card.title') }}</h5>
 
                     <div class="d-flex gap-3 align-items-center">
 
                         <select id="stageSelect" class="form-select" name="status_id">
                             @foreach($project->stageItems as $item)
-                                <option value="{{ $item->stage_id }}"
-                                    @selected($project->status_id == $item->stage_id)>
-                                    {{ $item->stage->name }}
+                                <option value="{{ $item->stage_id }}" @selected($project->status_id == $item->stage_id)>
+                                    {{ __('admin/projects.stages.' . $item->stage->name) }}
                                 </option>
                             @endforeach
                         </select>
 
+                        <button type="button" class="btn btn-success" id="startTimerBtn">
+                            {{ __('admin/projects.edit.timer_card.start') }}
+                        </button>
 
-
-                        <button type="button" class="btn btn-success" id="startTimerBtn">Старт</button>
-                        <button type="button" class="btn btn-danger" id="stopTimerBtn" disabled>Стоп</button>
+                        <button type="button" class="btn btn-danger" id="stopTimerBtn" disabled>
+                            {{ __('admin/projects.edit.timer_card.stop') }}
+                        </button>
 
                         <span id="timerDisplay" class="ms-3 badge bg-primary" style="font-size:16px">
-            00:00:00
-        </span>
+                            00:00:00
+                        </span>
                     </div>
                 </div>
 
-              <hr>
-                <h3>Етапи проєкту</h3>
+                <hr>
+                <h3>{{ __('admin/projects.edit.stages.title') }}</h3>
 
                 <table class="table align-middle">
                     <thead>
                     <tr>
-                        <th>Етап</th>
-                        <th>Старт</th>
-                        <th>Кінець</th>
-                        <th>Очікувана дата</th>
-                        <th>Витрачено</th>
-                        <th></th>
+                        <th>{{ __('admin/projects.edit.stages.table.name') }}</th>
+                        <th>{{ __('admin/projects.edit.stages.table.start') }}</th>
+                        <th>{{ __('admin/projects.edit.stages.table.end') }}</th>
+                        <th>{{ __('admin/projects.edit.stages.table.expected') }}</th>
+                        <th>{{ __('admin/projects.edit.stages.table.spent') }}</th>
+                        <th>{{ __('admin/projects.edit.stages.table.actions') }}</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     @foreach($project->stageItems as $item)
                         <tr id="row-existing-{{ $item->id }}">
-                            <td>{{ $item->display_name }}</td>
+                            <td> {{ __('admin/projects.stages.' . $item->display_name) }}</td>
 
                             <td><input type="date" name="stage[{{ $item->id }}][start_date]" value="{{ $item->start_date }}"></td>
                             <td><input type="date" name="stage[{{ $item->id }}][end_date]" value="{{ $item->end_date }}"></td>
@@ -96,17 +99,14 @@
                                 {{ gmdate('H:i:s', $item->spent_seconds) }}
                             </td>
 
-
-                            {{-- 🟥 КНОПКА ВИДАЛИТИ ЛИШЕ ДЛЯ custom --}}
                             <td>
                                 @if($item->custom)
                                     <button type="button"
                                             class="btn btn-sm btn-danger"
                                             onclick="removeExistingStage({{ $item->id }})">
-                                        ✖
+                                        {{ __('admin/projects.edit.stages.table.delete') }}
                                     </button>
 
-                                    {{-- прихований input, у цей масив додаємо id які треба видалити --}}
                                     <input type="hidden" name="delete_stage_ids[]" value="">
                                 @endif
                             </td>
@@ -116,35 +116,43 @@
                     </tbody>
                 </table>
 
-                <button id="addStageBtn" class="btn btn-outline-secondary mb-3">+ Додати етап</button>
+                <button id="addStageBtn" class="btn btn-outline-secondary mb-3">
+                    {{ __('admin/projects.edit.stages.add_button') }}
+                </button>
 
                 <table class="table">
                     <tbody id="newStagesContainer"></tbody>
                 </table>
 
                 <hr>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label>Рейт (₴/год)</label>
+                        <label>{{ __('admin/projects.edit.fields.rate') }}</label>
                         <input type="number" name="rate" class="form-control"
                                value="{{ $project->rate }}" step="0.01" min="0">
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Буфер часу перед початком очікування (години)</label>
+                        <label class="form-label">{{ __('admin/projects.edit.fields.buffer_hours') }}</label>
                         <input type="number" name="buffer_hours" class="form-control"
                                value="{{ $project->buffer_hours ?? 48 }}">
                     </div>
                 </div>
 
-                <button class="btn btn-success">Оновити</button>
-                <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary">Назад</a>
+                <button class="btn btn-success">
+                    {{ __('admin/projects.edit.buttons.save') }}
+                </button>
+
+                <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary">
+                    {{ __('admin/projects.edit.buttons.back') }}
+                </a>
             </form>
 
             <hr>
 
             <div class="card p-3 mb-4">
-                <h5>Очікування від клієнта</h5>
+                <h5>{{ __('admin/projects.waiting.title') }}</h5>
 
                 {{-- Контейнер очікування --}}
                 <div id="waiting-start"
@@ -152,13 +160,13 @@
                          style="display:none"
                     @endif>
                     <div class="mb-2">
-                        <label class="form-label">Що очікуємо?</label>
+                        <label class="form-label">{{ __('admin/projects.waiting.start.label') }}</label>
                         <textarea id="waitingComment" class="form-control" rows="2"
-                                  placeholder="Опишіть, що очікуємо від клієнта"></textarea>
+                                  placeholder="{{ __('admin/projects.waiting.start.placeholder') }}"></textarea>
                     </div>
 
                     <button id="waitingStartBtn" type="button" class="btn btn-warning">
-                        ▶️ Запустити очікування
+                        ▶️ {{ __('admin/projects.waiting.start.button') }}
                     </button>
                 </div>
 
@@ -172,13 +180,13 @@
                         {{-- RUNNING --}}
                         @if($waitingActive->status === 'running')
                             <div class="alert alert-danger">
-                                <b>Активне очікування:</b> клієнт ще не надав інформацію.
+                                <b>{{ __('admin/projects.waiting.running.title') }}</b>
                             </div>
 
                             <div class="fs-4 mb-2" id="waitingTimer">00:00:00</div>
-                            <p class="text-muted">Запущено: {{ $waitingActive->started_at }}</p>
+                            <p class="text-muted">{{ __('admin/projects.waiting.running.started_at') }}: {{ $waitingActive->started_at }}</p>
 
-                            <b>Що чекаємо:</b>
+                            <b>{{ __('admin/projects.waiting.running.comment') }}</b>
                             <div class="p-2 bg-light border rounded mb-2">
                                 {{ $waitingActive->admin_comment }}
                             </div>
@@ -186,55 +194,39 @@
 
                         {{-- PENDING --}}
                         @if($waitingActive->status === 'pending')
-{{--                            <form action="{{ route('admin.waiting.approve', $waitingActive->id) }}"--}}
-{{--                                  method="POST" class="d-inline">--}}
-{{--                                @csrf--}}
-{{--                                <button class="btn btn-success btn-sm">Підтвердити</button>--}}
-{{--                            </form>--}}
-
-{{--                            <form action="{{ route('admin.waiting.reject', $waitingActive->id) }}"--}}
-{{--                                  method="POST" class="d-inline">--}}
-{{--                                @csrf--}}
-{{--                                <button class="btn btn-danger btn-sm">Відхилити</button>--}}
-{{--                            </form>--}}
-
                             <div class="alert alert-warning mt-3">
-                                <b>Клієнт надав інформацію.</b><br>
-                                Очікуємо перевірку та підтвердження менеджером.
+                                <b>{{ __('admin/projects.waiting.pending.title') }}</b>
                             </div>
 
-                            <b>Коментар клієнта:</b>
+                            <b>{{ __('admin/projects.waiting.pending.comment') }}</b>
                             <div class="p-2 bg-white border rounded mb-2">
                                 {{ $waitingActive->client_comment }}
                             </div>
 
-                            <p class="text-muted">Запущено: {{ $waitingActive->started_at }}</p>
+                            <p class="text-muted">{{ __('admin/projects.waiting.pending.started_at') }}: {{ $waitingActive->started_at }}</p>
                         @endif
 
                         {{-- REJECTED --}}
                         @if($waitingActive->status === 'rejected')
                             <div class="alert alert-danger">
-                                <b>Менеджер відхилив відповідь.</b> Клієнт мусить відповісти ще раз.
+                                <b>{{ __('admin/projects.waiting.rejected.title') }}</b>
                             </div>
 
-                            <b>Причина відхилення:</b>
+                            <b>{{ __('admin/projects.waiting.rejected.reason') }}</b>
                             <div class="p-2 bg-white border rounded mb-3">
                                 {{ $waitingActive->rejected_admin_comment }}
                             </div>
 
-                            {{-- ⏱️ ТАЙМЕР ЯК У КЛІЄНТА --}}
                             <div class="fs-4 mb-2" id="waitingTimer">00:00:00</div>
 
-                            <p class="text-muted">Запущено: {{ $waitingActive->started_at }}</p>
+                            <p class="text-muted">{{ __('admin/projects.waiting.rejected.started_at') }}: {{ $waitingActive->started_at }}</p>
                         @endif
-
-
-
 
                     @endif
                 </div>
             </div>
-            <h4 class="mt-4">📜 Історія очікувань</h4>
+
+            <h4 class="mt-4">{{ __('admin/projects.waiting.history_title') }}</h4>
 
             @forelse($waitingHistory as $log)
                 <div class="mb-4 p-3 border rounded">
@@ -243,28 +235,21 @@
                     <div class="small text-muted mb-2">
                         {{ $log->created_at->format('d.m.Y H:i') }}
                         — <b>
-                            @if($log->status === 'running') Запущено очікування
-                            @elseif($log->status === 'pending') Клієнт відповів (очікуємо)
-                            @elseif($log->status === 'rejected') Відповідь відхилена
-                            @elseif($log->status === 'completed') Завершено
-                            @endif
+                            @lang('admin/projects.waiting.history_status.' . $log->status)
                         </b>
                     </div>
 
-                    {{-- ВСІ ПОВІДОМЛЕННЯ ЦЬОГО ЦИКЛУ ОЧІКУВАННЯ --}}
+                    {{-- ВСІ ПОВІДОМЛЕННЯ ЦЬОГО ЦИКЛУ --}}
                     @foreach($log->messages as $msg)
                         <div class="mt-2">
-
-                            {{-- Хедер хто писав --}}
                             <div class="fw-bold">
                                 @if($msg->from === 'client')
-                                    🧑‍💼 Клієнт відповів
+                                    👤 {{ __('admin/projects.waiting.messages.client') }}
                                 @else
-                                    🛠 Команда відповіла
+                                    🛠 {{ __('admin/projects.waiting.messages.admin') }}
                                 @endif
                             </div>
 
-                            {{-- Текст повідомлення --}}
                             <div class="p-2 bg-light rounded mt-1">
                                 {{ $msg->message }}
                             </div>
@@ -274,24 +259,26 @@
 
                 </div>
             @empty
-                <p class="text-muted">Історії поки немає.</p>
+                <p class="text-muted">{{ __('admin/projects.waiting.messages.empty') }}</p>
             @endforelse
 
             <hr>
 
-
         @endif
-        <h4>💬 Чат з менеджером</h4>
+
+        <h4>{{ __('admin/projects.chat.title') }}</h4>
 
         <div class="border p-3 mb-3" style="max-height:400px; overflow-y:auto;">
             @forelse($project->messages as $msg)
                 <div class="p-2 mb-2 rounded {{ $msg->from_client ? 'bg-light' : 'bg-primary text-white' }}">
-                    <strong>{{ $msg->from_client ? 'Клієнт' : 'Адмін' }}:</strong>
+                    <strong>
+                        {{ $msg->from_client ? __('admin/projects.chat.message.client') : __('admin/projects.chat.message.admin') }}:
+                    </strong>
                     <div>{{ $msg->message }}</div>
                     <small class="text-muted">{{ $msg->created_at->format('H:i d.m.Y') }}</small>
                 </div>
             @empty
-                <p class="text-muted">Повідомлень поки немає</p>
+                <p class="text-muted">{{ __('admin/projects.chat.empty') }}</p>
             @endforelse
         </div>
 
@@ -299,12 +286,17 @@
         @if(Auth::user()->role === 'client')
             <form method="POST" action="{{ route('project.message.send', $project->id) }}">
                 @csrf
-                <textarea name="message" rows="3" class="form-control mb-2" placeholder="Напишіть повідомлення..."></textarea>
-                <button type="submit" class="btn btn-primary">Надіслати</button>
+                <textarea name="message" rows="3" class="form-control mb-2"
+                          placeholder="{{ __('admin/projects.chat.form.placeholder') }}"></textarea>
+
+                <button type="submit" class="btn btn-primary">
+                    {{ __('admin/projects.chat.form.send') }}
+                </button>
             </form>
         @endif
     </div>
 @endsection
+
 @section('scripts')
 
     <script>
