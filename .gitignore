@@ -1,0 +1,53 @@
+# Dependencies
+/node_modules
+/vendor
+
+# Build/Hot Reload
+/public/build
+/public/hot
+
+# User uploads (linked storage)
+/public/storage
+
+# Laravel storage
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*.php
+
+# Env files
+.env*
+!.env.example
+
+# Backup/Secrets
+.env.backup
+.env.production
+auth.json
+
+# PHPUnit
+.phpunit.result.cache
+
+# Logs and debug
+npm-debug.log
+yarn-error.log
+
+# IDE
+/.idea
+/.vscode
+/.fleet
+
+# Homestead
+Homestead.json
+Homestead.yaml
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Allow gitkeep to preserve folders
+!storage/.gitkeep
+!storage/logs/.gitkeep
+!storage/framework/.gitkeep
+!public/storage/.gitkeep
