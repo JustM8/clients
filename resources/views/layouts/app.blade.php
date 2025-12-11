@@ -6,27 +6,186 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Smarto Agency - Clients</title>
 
-{{--    <link rel="dns-prefetch" href="//fonts.bunny.net">--}}
-{{--    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">--}}
-
     {{-- Vite --}}
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @yield('head')
 
     {{-- Підключення бібліотек --}}
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.8/dist/inputmask.min.js"></script>
-{{--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">--}}
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --smarto-orange: #ff4800;
+            --smarto-orange-light: #ff6b00;
+            --smarto-dark: #1a1a1a;
+            --smarto-darker: #0d0d0d;
+            --smarto-gray: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--smarto-dark);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* Modern Navbar */
+        .navbar-smarto {
+            background: rgba(26, 26, 26, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 72, 0, 0.1);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-smarto.scrolled {
+            padding: 0.8rem 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-brand {
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .navbar-smarto .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.6rem 1rem !important;
+            border-radius: 8px;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-smarto .nav-link:hover {
+            color: var(--smarto-orange) !important;
+            background: rgba(255, 72, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .navbar-smarto .nav-link.active {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--smarto-orange) 0%, var(--smarto-orange-light) 100%);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 72, 0, 0.3);
+        }
+
+        .navbar-smarto .nav-link.text-muted {
+            color: rgba(255, 255, 255, 0.3) !important;
+            cursor: not-allowed;
+        }
+
+        .navbar-smarto .dropdown-menu {
+            background: var(--smarto-gray);
+            border: 1px solid rgba(255, 72, 0, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .navbar-smarto .dropdown-item {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .navbar-smarto .dropdown-item:hover {
+            background: linear-gradient(135deg, var(--smarto-orange) 0%, var(--smarto-orange-light) 100%);
+            color: white !important;
+            transform: translateX(5px);
+        }
+
+        .navbar-smarto .dropdown-item.active {
+            background: linear-gradient(135deg, var(--smarto-orange) 0%, var(--smarto-orange-light) 100%);
+            color: white !important;
+        }
+
+        .navbar-toggler {
+            border: 2px solid rgba(255, 72, 0, 0.5);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+        }
+
+        .navbar-toggler:hover {
+            background: rgba(255, 72, 0, 0.1);
+            border-color: var(--smarto-orange);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Main Content */
+        main {
+            min-height: calc(100vh - 100px);
+            background: linear-gradient(to bottom, var(--smarto-dark) 0%, var(--smarto-darker) 100%);
+            padding: 2rem 0;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--smarto-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--smarto-orange);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--smarto-orange-light);
+        }
+    </style>
 </head>
 <body>
 <div id="app">
-    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm" style="background: #7b7b7b !important;">
+    <nav class="navbar navbar-expand-md navbar-dark navbar-smarto">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url('/home') }}">
-{{--                {{ config('app.name', 'Laravel') }}--}}
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url('/home') }}">
                 <svg width="104" height="26" viewBox="0 0 104 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.00675 6.89969C4.00675 7.55465 4.8377 7.81075 7.87754 7.81075C11.2243 7.81075 11.646 7.59243 11.646 7.18098C11.646 6.74434 11.4164 6.52602 7.39317 6.39797C1.96488 6.21744 0.520119 5.31897 0.520119 3.3289C0.520119 1.20868 2.43673 0.104492 7.62283 0.104492C13.1409 0.104492 14.8779 0.797236 14.8779 3.03291C14.8779 3.22604 14.8779 3.41917 14.8654 3.63749C14.4834 3.6123 13.8048 3.5997 13.1534 3.5997C12.477 3.5997 11.7984 3.6123 11.4164 3.63749V3.39398C11.4164 2.73902 10.9571 2.5207 7.57064 2.5207C4.45355 2.5207 3.99423 2.71383 3.99423 3.09799C3.99423 3.48215 4.23641 3.65009 8.51641 3.8684C13.5877 4.12451 15.1452 4.86973 15.1452 7.02774C15.1452 9.27601 13.3706 10.355 7.91512 10.355C2.34486 10.355 0.442871 9.41666 0.442871 7.46438C0.442871 7.23346 0.455398 6.98995 0.495066 6.73175C0.941856 6.78213 1.61831 6.82202 2.25717 6.82202C2.90857 6.82202 3.52238 6.80942 4.00675 6.78423V6.89969Z" fill="white"></path>
                     <path d="M31.9038 10.0463C31.9539 8.67133 31.9935 7.33622 32.0061 5.74291C32.0061 5.08796 32.0583 4.38052 32.0958 3.70037L32.0061 3.67518C31.6866 4.31754 31.3296 4.98509 30.8953 5.54979L27.5235 10.0442H25.774L21.993 4.983C21.5712 4.4183 21.2017 3.75075 20.8823 3.13358L20.7925 3.15877C20.8301 3.82632 20.8822 4.49388 20.8948 5.2265C20.9073 7.02554 20.947 8.52649 21.0221 10.0421H17.5981C17.6754 8.65454 17.7004 7.25435 17.7004 5.21391C17.7004 3.10839 17.6754 1.66832 17.6357 0.410889H22.7717C23.4753 1.4521 24.5213 3.01812 25.8366 4.93261C26.1811 5.42173 26.5527 5.97383 26.9097 6.53852H26.987C27.3315 5.96123 27.6634 5.40914 27.9829 4.93261C29.2084 3.09579 30.3588 1.42691 31.0478 0.410889H35.5825C35.5449 1.67042 35.5052 3.10839 35.5052 5.21391C35.5052 7.25645 35.5177 8.65664 35.6075 10.0421H31.9038V10.0463Z" fill="white"></path>
@@ -50,19 +209,23 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true" v-pre="">
-                            {{ __('admin.Lang') }} - {{ strtoupper(App::currentLocale())}}
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" 
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="">
+                            🌐 {{ __('admin.Lang') }} - {{ strtoupper(App::currentLocale())}}
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" data-bs-popper="static">
-                            <a class="dropdown-item @if(App::currentLocale()=='ua'){{'active'}}@endif" href="{{ url('/locale/ua') }}">
-                                UA
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item @if(App::currentLocale()=='ua'){{'active'}}@endif" 
+                               href="{{ url('/locale/ua') }}">
+                                🇺🇦 UA
                             </a>
-                            <a class="dropdown-item @if(App::currentLocale()=='en'){{'active'}}@endif" href="{{ url('/locale/en') }}">
-                                EN
+                            <a class="dropdown-item @if(App::currentLocale()=='en'){{'active'}}@endif" 
+                               href="{{ url('/locale/en') }}">
+                                🇬🇧 EN
                             </a>
                         </div>
                     </li>
                 </ul>
+                
                 {{-- LEFT SIDE --}}
                 <ul class="navbar-nav me-auto">
                     @auth
@@ -89,13 +252,10 @@
                         @endif
 
                         {{-- Для клієнта --}}
-
                         @if(Auth::user()->role === 'client')
-                            {{-- Поки дашборду немає — робимо просто неактивний пункт --}}
                             <li class="nav-item">
                                 <span class="nav-link text-muted">🏠 Дашборд</span>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('client.projects.*') ? 'active' : '' }}"
                                    href="{{ route('client.projects.index') }}">
@@ -110,21 +270,29 @@
                 <ul class="navbar-nav ms-auto">
                     @guest
                         @if (Route::has('login'))
-                            <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Увійти</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">
+                                    🔑 Увійти
+                                </a>
+                            </li>
                         @endif
                         @if (Route::has('register'))
-                            <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Реєстрація</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">
+                                    ✨ Реєстрація
+                                </a>
+                            </li>
                         @endif
                     @else
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                            <a id="navbarDropdownUser" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ Auth::user()->name }}
+                                👤 {{ Auth::user()->name }}
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end">
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Вийти
+                                    🚪 Вийти
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
@@ -137,10 +305,22 @@
         </div>
     </nav>
 
-    <main class="py-4 ">
+    <main>
         @yield('content')
     </main>
 </div>
+
+<script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar-smarto');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+</script>
 
 @yield('scripts')
 </body>

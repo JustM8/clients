@@ -1,11 +1,7 @@
-// Fonts
-//@import url('https://fonts.bunny.net/css?family=Nunito');
-
-// Variables
-@import 'variables';
-
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+// Stage visualization styles
 .stage-line {
     display: flex;
     width: 100%;
@@ -21,7 +17,6 @@
     padding: 10px 10px;
     font-size: 14px;
     font-weight: 600;
-    //border-right: 1px solid rgba(0,0,0,0.08);
     white-space: nowrap;
 }
 

@@ -1,119 +1,95 @@
 @extends('layouts.app')
-@section('head')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.min.css">
-@endsection
+
 @section('content')
-    <div class="container mt-4">
-        <h3>Редагування користувача</h3>
+<style>
+    .page-header {
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff4800 0%, #ff6b00 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .form-card {
+        background: rgba(42, 42, 42, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 72, 0, 0.2);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .form-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        background: rgba(13, 13, 13, 0.6);
+        border: 1px solid rgba(255, 72, 0, 0.2);
+        border-radius: 12px;
+        color: #ffffff;
+        padding: 0.875rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background: rgba(13, 13, 13, 0.8);
+        border-color: #ff4800;
+        box-shadow: 0 0 0 0.2rem rgba(255, 72, 0, 0.2);
+        color: #ffffff;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="page-header">
+        <h1 class="page-title">Редагувати користувача</h1>
+    </div>
+
+    <div class="form-card">
         <form action="{{ route('admin.users.update', $user) }}" method="POST">
             @csrf @method('PUT')
 
             <div class="mb-3">
-                <label>Ім’я</label>
+                <label class="form-label">Ім'я</label>
                 <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
             </div>
 
             <div class="mb-3">
-                <label>Email</label>
+                <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-control" value="{{ $user->email }}" required>
             </div>
 
             <div class="mb-3">
-                <label>Новий пароль (необов’язково)</label>
+                <label class="form-label">Новий пароль (залиште пустим, якщо не змінюєте)</label>
                 <input type="password" name="password" class="form-control">
             </div>
 
             <div class="mb-3">
-                <label>Компанія</label>
+                <label class="form-label">Компанія</label>
                 <input type="text" name="company_name" class="form-control" value="{{ $user->company_name }}">
             </div>
 
             <div class="mb-3">
-                <label for="phone" class="form-label">Телефон</label>
-                <input id="phone" type="tel" class="form-control" value="{{ $user->phone }}"/>
-                <input id="phone_e164" name="phone" type="hidden" />
+                <label class="form-label">Телефон</label>
+                <input type="text" name="phone" class="form-control" value="{{ $user->phone }}">
             </div>
 
-            <button class="btn btn-success">Оновити</button>
-            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Назад</a>
+            <div class="d-flex gap-3 mt-4">
+                <button class="btn btn-success">
+                    ✅ Оновити
+                </button>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                    ← Назад
+                </a>
+            </div>
         </form>
     </div>
-@endsection
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const input = document.querySelector("#phone");
-            const hidden = document.querySelector("#phone_e164");
-            const utilsUrl = "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js";
-
-            // Дочекайся завантаження utils.js перед ініціалізацією
-            function initTelInput() {
-                if (!window.intlTelInput || !input) return;
-
-                const iti = window.intlTelInput(input, {
-                    initialCountry: "ua",
-                    preferredCountries: ["ua", "pl", "gb", "us"],
-                    separateDialCode: true,
-                    nationalMode: false,
-                    formatOnDisplay: true,
-                    autoPlaceholder: "polite",
-                    utilsScript: utilsUrl // обов’язково тут
-                });
-
-                // Коли utils підвантажиться — примусове оновлення маски
-                input.addEventListener("countrychange", () => {
-                    setTimeout(() => {
-                        const placeholder = input.getAttribute("placeholder");
-                        console.log("Маска оновилась:", placeholder);
-                    }, 500);
-                });
-
-                // Записуємо в hidden поле E.164 формат
-                const updateHidden = () => {
-                    hidden.value = iti.isValidNumber() ? iti.getNumber() : input.value;
-                };
-                input.addEventListener('blur', updateHidden);
-                input.addEventListener('change', updateHidden);
-            }
-
-            // ⏳ Завантаження utils.js вручну, якщо ще не є в DOM
-            if (!document.querySelector(`script[src="${utilsUrl}"]`)) {
-                const script = document.createElement("script");
-                script.src = utilsUrl;
-                script.onload = initTelInput;
-                document.body.appendChild(script);
-            } else {
-                initTelInput();
-            }
-            setTimeout(() => {
-                const placeholder = input.placeholder || "";
-                if (placeholder) {
-                    const mask = placeholder.replace(/[0-9]/g, "9");
-                    Inputmask({
-                        mask: mask,
-                        showMaskOnFocus: true,
-                        showMaskOnHover: false,
-                        clearIncomplete: true
-                    }).mask(input);
-                    console.log("Маска застосована:", mask);
-                } else {
-                    console.warn("Placeholder порожній, маску не застосовано");
-                }
-            }, 1000);
-        });
-        // 👁 toggle & генерація паролю
-        const passwordInput = document.getElementById('password');
-        const toggleBtn = document.getElementById('togglePassword');
-        const generateBtn = document.getElementById('generatePassword');
-
-        toggleBtn.addEventListener('click', () => {
-            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
-            toggleBtn.textContent = passwordInput.type === 'password' ? '👁' : '🙈';
-        });
-
-        generateBtn.addEventListener('click', () => {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-            passwordInput.value = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-        });
-    </script>
+</div>
 @endsection
