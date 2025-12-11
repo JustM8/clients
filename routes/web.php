@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WaitingController;
@@ -17,6 +18,16 @@ Auth::routes();
 
 Route::get('/locale/{lang}', [\App\Http\Controllers\LanguageController::class,'index'])->name('index');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::middleware(['auth', 'admin'])->prefix('api/dashboard')->name('api.dashboard.')->group(function () {
+    Route::get('/overview', [DashboardController::class, 'overview'])->name('overview');
+    Route::get('/projects-by-type', [DashboardController::class, 'projectsByType'])->name('projects-by-type');
+    Route::get('/projects-by-stage', [DashboardController::class, 'projectsByStage'])->name('projects-by-stage');
+    Route::get('/projects-by-month', [DashboardController::class, 'projectsByMonth'])->name('projects-by-month');
+    Route::get('/work-hours-by-project', [DashboardController::class, 'workHoursByProject'])->name('work-hours-by-project');
+    Route::get('/waiting-clients', [DashboardController::class, 'waitingClients'])->name('waiting-clients');
+    Route::get('/recent-activity', [DashboardController::class, 'recentActivity'])->name('recent-activity');
+});
 
 // 🔹 Адмінська зона
 Route::middleware(['auth', 'admin'])
@@ -63,6 +74,8 @@ Route::middleware(['auth', 'admin'])
 
         Route::post('/admin/waiting/{waiting}/reject', [WaitingController::class, 'reject'])
             ->name('admin.waiting.reject');
+
+
 
     });
 

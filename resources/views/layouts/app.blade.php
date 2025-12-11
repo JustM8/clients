@@ -180,6 +180,7 @@
             background: var(--smarto-orange-light);
         }
     </style>
+    @stack('styles')
 </head>
 <body>
 <div id="app">
@@ -209,23 +210,23 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" 
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="">
                             🌐 {{ __('admin.Lang') }} - {{ strtoupper(App::currentLocale())}}
                         </a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item @if(App::currentLocale()=='ua'){{'active'}}@endif" 
+                            <a class="dropdown-item @if(App::currentLocale()=='ua'){{'active'}}@endif"
                                href="{{ url('/locale/ua') }}">
                                 🇺🇦 UA
                             </a>
-                            <a class="dropdown-item @if(App::currentLocale()=='en'){{'active'}}@endif" 
+                            <a class="dropdown-item @if(App::currentLocale()=='en'){{'active'}}@endif"
                                href="{{ url('/locale/en') }}">
                                 🇬🇧 EN
                             </a>
                         </div>
                     </li>
                 </ul>
-                
+
                 {{-- LEFT SIDE --}}
                 <ul class="navbar-nav me-auto">
                     @auth
@@ -322,6 +323,6 @@
     });
 </script>
 
-@yield('scripts')
+@stack('scripts')
 </body>
 </html>
