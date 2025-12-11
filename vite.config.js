@@ -6,6 +6,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
+                'resources/sass/admin-dashboard.scss', // ← додати це
                 'resources/js/app.js',
                 'resources/js/clients-show.js',
                 'resources/js/admin-dashboard.js',
