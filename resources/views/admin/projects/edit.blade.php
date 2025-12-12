@@ -266,9 +266,9 @@
 
                     <div class="d-flex gap-3 align-items-center flex-wrap">
                         <div class="flex-grow-1">
-                            <select id="stageSelect" class="form-select" name="status_id">
+                            <select id="stageSelect" class="form-select" name="stage_item_id">
                                 @foreach($project->stageItems as $item)
-                                    <option value="{{ $item->stage_id }}" @selected($project->status_id == $item->stage_id)>
+                                    <option value="{{ $item->id }}">
                                         {{ __('admin/projects.stages.' . $item->stage->name) }}
                                     </option>
                                 @endforeach

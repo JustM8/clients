@@ -222,7 +222,7 @@ class DashboardController extends Controller
             ->limit(10)
             ->get()
             ->map(function ($item) {
-                $hours = round($item->total_seconds / 3600, 2);
+                $hours = $item->total_seconds / 3600;
                 $earnings = round($hours * $item->rate, 2);
                 return [
                     'id' => $item->id,

@@ -189,16 +189,47 @@ async function loadWorkHours() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false }},
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const totalSeconds = Math.round(context.raw * 3600);
+                                const hours = Math.floor(totalSeconds / 3600);
+                                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                                const seconds = totalSeconds % 60;
+
+                                if (hours > 0) {
+                                    return `Години роботи: ${hours} год ${minutes} хв ${seconds} сек`;
+                                }
+
+                                if (minutes > 0) {
+                                    return `Години роботи: ${minutes} хв ${seconds} сек`;
+                                }
+
+                                return `Години роботи: ${seconds} сек`;
+                            }
+
+                        }
+                    }
+                },
                 scales: {
                     x: { grid: { display: false }},
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#2a2a4a' }
+                        grid: { color: '#2a2a4a' },
+                        ticks: {
+                            callback: function(value) {
+                                const minutes = Math.round(value * 60);
+                                return `${minutes} хв`;
+                            }
+                        }
                     }
+
                 }
             }
         });
+
     } catch (error) {
         console.error('Error loading work hours:', error);
     }

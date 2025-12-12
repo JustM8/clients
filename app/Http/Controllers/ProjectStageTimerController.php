@@ -10,22 +10,30 @@ class ProjectStageTimerController extends Controller
 {
     public function start(Project $project, Request $request)
     {
+        // 1. Беремо stage_item ТІЛЬКИ з цього project
+        $stageItem = $project->stageItems()
+            ->where('id', $request->stage_item_id)
+            ->firstOrFail();
+
+        // 2. Перевіряємо, чи немає вже активного таймера
         $active = ProjectStageTimer::where('project_id', $project->id)
             ->whereNull('stopped_at')
-            ->first();
+            ->exists();
 
         if ($active) {
             return response()->json(['error' => 'Таймер вже запущений'], 400);
         }
 
+        // 3. Створюємо таймер з ПЕРЕВІРЕНИМ id
         $timer = ProjectStageTimer::create([
-            'project_id'     => $project->id,
-            'stage_item_id'  => $request->stage_item_id, // ← ПРАВИЛЬНО
-            'started_at'     => now(),
+            'project_id'    => $project->id,
+            'stage_item_id' => $stageItem->id,
+            'started_at'    => now(),
         ]);
 
         return response()->json(['success' => true, 'timer' => $timer]);
     }
+
 
     public function stop(Project $project)
     {
