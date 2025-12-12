@@ -77,6 +77,27 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">Мова для спілкування з клієнтом</label>
+
+                @php
+                    $locales = config('app.available_locales');
+                    $currentLocale = old(
+                        'lng',
+                        $user->lng ?? config('app.locale') // або 'en'
+                    );
+                @endphp
+
+                <select name="lng" class="form-control">
+                    @foreach ($locales as $label => $code)
+                        <option value="{{ $code }}" @selected($currentLocale === $code)>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+
+            <div class="mb-3">
                 <label class="form-label">Телефон</label>
                 <input type="text" name="phone" class="form-control" value="{{ $user->phone }}">
             </div>

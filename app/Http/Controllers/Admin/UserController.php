@@ -30,6 +30,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'company_name' => $request->company_name,
             'phone' => $request->phone,
+            'lng' => $request->lng,
             'role' => 'client',
         ]);
 
@@ -48,7 +49,7 @@ class UserController extends Controller
             'email' => "required|email|unique:users,email,{$user->id}",
         ]);
 
-        $data = $request->only('name', 'email', 'company_name', 'phone');
+        $data = $request->only('name', 'email', 'company_name', 'phone','lng');
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
